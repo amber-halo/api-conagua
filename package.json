@@ -1,0 +1,30 @@
+{
+  "name": "api-conagua",
+  "version": "1.0.0",
+  "description": "Weather API for querying daily weather information that uses CONAGUA API.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/amber-halo/api-conagua.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/amber-halo/api-conagua/issues"
+  },
+  "homepage": "https://github.com/amber-halo/api-conagua#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "helmet": "^4.4.1",
+    "mongoose": "^5.11.15",
+    "nunjucks": "^3.2.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}
