@@ -1,23 +1,24 @@
-var url = "https://smn.conagua.gob.mx/webservices/?method=1";
+document.getElementById('btnSend').addEventListener('click', () => {
+    let query = document.getElementById('query');
 
-function getDataAJAX() {
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', url, true);
-    xhr.responseType = 'arraybuffer';
-    xhr.onload = function(e) {
-        if (this.status == 200) {
-            console.log(this.response);
-            // var data = pako.inflate(new Uint8Array(this.response), {to:'string'});
-            // // console.log(data);
+    if (query) {
+        // process query
 
-            // let jsonData = JSON.parse(data);
+        fetch('/graphql', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify({
+                query: "{ forecasts { cc } }"
+            })
+        })
+        .then(r => r.json())
+        .then(data => console.log('data returned:', data));
 
-            // console.log(jsonData);
-        } else {
-            console.log('ERROR');
-        }
+
+    } else {
+        alert('Enter a query.');
     }
-    xhr.send();
-}
-
-getDataAJAX();
+});
