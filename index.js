@@ -68,16 +68,6 @@ mongoose.connect(`mongodb+srv://${MBD_USER}:${MDB_PASSWORD}@cluster0.0aw1j.mongo
     app.listen(3000, () => console.log(`Listening at port ${PORT}`));
 
     // getData();
-    // forecastInstance.cc = 'hello world';
-    // forecastInstance.save((err) => {
-    //     if (err) {
-    //         console.log('ERROR ON SAVING');
-    //         return;
-    //     }
-
-
-    // });
-    // getData();
 })
 .catch(err => {
     throw(err);
@@ -90,7 +80,7 @@ app.use('/graphql', graphqlHTTP({
             // return ForecastModel.find({});
             // return forecastData;
 
-            return ForecastModel.find({  })
+            return ForecastModel.find({ nes: "Chihuahua" })
             .then(forecasts => {
                 return forecasts.map(forecast => {
                     return { ...forecast._doc };
@@ -116,8 +106,6 @@ async function getData() {
     const getStream = bent('https://smn.conagua.gob.mx');
     try {
         // let buffer = await getBuffer('https://smn.conagua.gob.mx/webservices/?method=1');   
-
-        // let db = mongoose.connection;
 
         let stream = await getStream('/webservices/?method=1');
 
@@ -148,13 +136,13 @@ async function getData() {
     }
 }
 
-app.get('/', (req, res) => {
+app.get('/', async (req, res) => {
     res.render('index.html');
 });
 
 // /query/filter?nes=Oaxaca&nmun=X
 // /query/filter?nes=Oaxaca&nmun=X/get/?cc&nes&nmun
-app.get('/query/filter?', (req, res) => {
+app.get('/query/filter?', async (req, res) => {
     // process url to get query string
 
     // get full url
@@ -182,29 +170,26 @@ app.get('/query/filter?', (req, res) => {
         }
 
         filter = filter.split('=');
-        jsonString += `"${filter[0]}":"${filter[1]}"${i < filters.length - 1 ? ',' : ''}`;
+        jsonString += `${filter[0]}:"${filter[1]}"${i < filters.length - 1 ? ',' : ''}`;
     }
 
     jsonString = `{ ${jsonString} }`;
-    // console.log(jsonString);
-    let json = JSON.parse(jsonString);
-    console.log(json);
 
-    if (!json) {
-        throw new Error('Error parsing query string.');
+    let attrs = get.join('\n');
+    console.log(attrs);
+
+    const post = bent('http://localhost:3000/', 'POST', 'json', 200);
+
+    try {
+        // const response = await post('graphql', { query: "{ forecasts { cc } }" } );
+        const response = await post('graphql', { query: `{ search(filter: ${jsonString}) { ${attrs} } }` } );
+
+        if (response) {
+            res.json(response);
+        }
+    } catch (error) {
+        throw error;
     }
-
-    ForecastModel.find(json)
-    .then(forecast => { 
-        // console.log(forecast);
-        res.json(forecast);
-    })
-    .catch(err => { throw err });
-    // console.log(result);
-
-    // ForecastModel.findMany();
-
-    // res.send(result);
 });
 
 // app.listen(3000, () => console.log(`Listening at port ${PORT}`));
