@@ -30,7 +30,7 @@ module.exports = buildSchema(`
     }
 
     type RootQuery {
-        forecasts: [Forecast!]!
+        forecasts: [Forecast]
         search(filter: Filter): [Forecast]
     }
 

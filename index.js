@@ -39,6 +39,8 @@ const Forecast = new Schema({
     velvien: String
 });
 
+const post = bent('http://localhost:3000/', 'POST', 'json', 200);
+
 var ForecastModel;
 var forecastInstance;
 var forecastData;
@@ -80,7 +82,7 @@ app.use('/graphql', graphqlHTTP({
             // return ForecastModel.find({});
             // return forecastData;
 
-            return ForecastModel.find({ nes: "Chihuahua" })
+            return ForecastModel.find({})
             .then(forecasts => {
                 return forecasts.map(forecast => {
                     return { ...forecast._doc };
@@ -148,17 +150,16 @@ app.get('/query/filter?', async (req, res) => {
     // get full url
     let url = String(req.url);
     let split = url.split('/');
-    // console.log(split);
+    console.log(split);
 
     // get query string for filters and data expected
     let filters = split[2].split('?')[1].split('&');
-    let get = split[4].split('?')[1].split('&');
+    let get = split[4] != '' ? split[4].split('?')[1].split('&') : undefined;
 
-    // console.log(filters);
-    // console.log(get);
+    console.log(filters);
+    console.log(get);
 
     if (filters.length > 2) {
-        // too many arguments
         throw new Error('Too many argumentes in query string: filter.');
     }
 
@@ -172,13 +173,18 @@ app.get('/query/filter?', async (req, res) => {
         filter = filter.split('=');
         jsonString += `${filter[0]}:"${filter[1]}"${i < filters.length - 1 ? ',' : ''}`;
     }
-
     jsonString = `{ ${jsonString} }`;
 
-    let attrs = get.join('\n');
-    console.log(attrs);
-
-    const post = bent('http://localhost:3000/', 'POST', 'json', 200);
+    let attrs;
+    if (!get) {
+        // return all attributes
+        let attrsString = `cc desciel dh dirvienc dirvieng dloc ides idmun lat lon ndia nes nmun prec probprec raf tmax tmin velvien`;
+        attrs = attrsString.split(' ');
+    } else {
+        // return just the specified attributes
+        attrs = get.join('\n');
+    }
+    // console.log(attrs);
 
     try {
         // const response = await post('graphql', { query: "{ forecasts { cc } }" } );
@@ -190,6 +196,40 @@ app.get('/query/filter?', async (req, res) => {
     } catch (error) {
         throw error;
     }
+});
+
+app.get('/query/get/?', async (req, res) => {
+    // get full url
+    let url = String(req.url);
+    let split = url.split('/');
+    console.log(split);
+
+    let get = split[3] != '' ? split[3].split('?')[1].split('&') : undefined;
+
+    console.log(get);
+
+    let attrs;
+    if (!get) {
+        // return all attributes
+        let attrsString = `cc desciel dh dirvienc dirvieng dloc ides idmun lat lon ndia nes nmun prec probprec raf tmax tmin velvien`;
+        attrs = attrsString.split(' ');
+    } else {
+        // return just the specified attributes
+        attrs = get.join('\n');
+    }
+    // console.log(attrs);
+
+    try {
+        const response = await post('graphql', { query: `{ forecasts { ${attrs} } }` } );
+        
+        if (response) {
+            res.json(response);
+        }
+    } catch (error) {
+        throw error;
+    }
+
+    // res.sendStatus(200);
 });
 
 // app.listen(3000, () => console.log(`Listening at port ${PORT}`));
