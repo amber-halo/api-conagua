@@ -2,33 +2,14 @@ const express = require('express');
 const router = express.Router();
 const bent = require('bent');
 
+const splitURL = require('../utils/querystring').splitURL;
+const getJSONString = require('../utils/querystring').getJSONString;
+
 const url = `http://localhost:${process.env.PORT || 3000}/`;
 const post = bent(url, 'POST', 'json', 200);
 
 const attrsList = 'cc desciel dh dirvienc dirvieng dloc ides idmun lat lon ndia nes nmun prec probprec raf tmax tmin velvien';
 const allAttributes = attrsList.split(' ');
-
-const splitURL = function(req, res, next) {
-    // get full url
-    let url = String(req.url);
-    let split = url.split('/');
-    // console.log(split);
-    req.split = split;
-    next();
-}
-
-const getJSONString = function(filters) {
-    let jsonString = '';
-    for (let i = 0; i < filters.length; i++) {
-        let filter = filters[i];
-        if (!String(filter).includes('=')) {
-            throw new Error('Invalid filter. No argument found.');
-        }
-        filter = filter.split('=');
-        jsonString += `${filter[0]}:"${filter[1]}"${i < filters.length - 1 ? ',' : ''}`;
-    }
-    return jsonString;
-}
 
 router.use(splitURL);
 

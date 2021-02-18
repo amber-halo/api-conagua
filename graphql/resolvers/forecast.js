@@ -2,7 +2,6 @@ const Forecast = require('../../mongodb/models/forecast');
 
 module.exports =  {
     forecasts: async () => {
-        // return ForecastModel.find({});
         try {
             const forecasts = await Forecast.find({});
             return forecasts.map(forecast => {

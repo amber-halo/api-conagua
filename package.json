@@ -26,6 +26,7 @@
     "graphql": "^15.5.0",
     "helmet": "^4.4.1",
     "mongoose": "^5.11.15",
+    "node-cron": "^2.0.3",
     "nunjucks": "^3.2.2",
     "pako": "^2.0.3"
   },
