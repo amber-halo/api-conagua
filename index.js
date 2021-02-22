@@ -3,6 +3,7 @@ const express = require('express');
 const { graphqlHTTP } = require('express-graphql');
 const helmet = require('helmet');
 const cors = require('cors');
+const morgan = require('morgan');
 const mongoose = require('mongoose');
 const nunjucks = require('nunjucks');
 const cron = require('node-cron');
@@ -29,6 +30,7 @@ nunjucks.configure('views', {
 
 app.use(helmet());
 app.use(cors());
+app.use(morgan('common'))
 app.use(express.static('public'));
 
 mongoose.connect(`mongodb+srv://${MBD_USER}:${MDB_PASSWORD}@cluster0.0aw1j.mongodb.net/${MDB_DB}?retryWrites=true&w=majority`, {
@@ -54,7 +56,7 @@ mongoose.connect(`mongodb+srv://${MBD_USER}:${MDB_PASSWORD}@cluster0.0aw1j.mongo
 app.use('/graphql', graphqlHTTP({
     schema: graphQLSchema,
     rootValue: rootValues,
-    graphiql: true
+    graphiql: false
 }));
 
 app.get('/', async (req, res) => {
